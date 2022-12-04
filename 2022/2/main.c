@@ -93,7 +93,7 @@ int calculate_points1(match_t match, const int round_count)
 			points += 6;
 		else if (match->player_shape == SCISSORS_P && match->opponent_shape == PAPER_O)
 			points += 6;
-		points += 1 * (match->player_shape == ROCK_P) + 2 * (match->player_shape == PAPER_P) + 3 * (match->player_shape == SCISSORS_P);
+		points += ROCK_POINTS * (match->player_shape == ROCK_P) + PAPER_POINTS * (match->player_shape == PAPER_P) + SCISSORS_POINTS * (match->player_shape == SCISSORS_P);
 		match++;
 	}
 	match = start;
