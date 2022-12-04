@@ -122,6 +122,7 @@ int calculate_points2(match_t match, const int round_count)
 			points += (match->opponent_shape == SCISSORS_O) * SCISSORS_POINTS;
 			break;
 		case WIN_E:
+
 			points += 6;
 			points += (match->opponent_shape == ROCK_O) * PAPER_POINTS;
 			points += (match->opponent_shape == PAPER_O) * SCISSORS_POINTS;
