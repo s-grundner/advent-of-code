@@ -50,7 +50,7 @@ int count_rounds(char *filename)
 
 	while (fgets(line, sizeof(line), file) != NULL)
 		match_count += (line[0] != '\n');
-
+	fclose(file);
 	return match_count;
 }
 
