@@ -107,7 +107,7 @@ int calculate_points2(match_t match, const int round_count)
 
 	for (int i = 0; i < round_count; i++)
 	{
-		switch (match->player_shape)
+		switch ((strategy_outcome_t)match->player_shape)
 		{
 		case LOSE_E:
 			points += (match->opponent_shape == ROCK_O) * SCISSORS_POINTS;
