@@ -14,9 +14,9 @@
 
 typedef struct
 {
-	char* compartment_one;
-	char* compartment_two;
-	char* all_compartments;
+	char *compartment_one;
+	char *compartment_two;
+	char *all_compartments;
 
 	char most_common;
 	int capacity;
@@ -27,9 +27,9 @@ typedef struct
 // UTIL
 // ------------------------------------------------------------
 
-int count_rucksacks(char* filename)
+int count_rucksacks(char *filename)
 {
-	FILE* file = fopen(filename, "r");
+	FILE *file = fopen(filename, "r");
 	if (file == NULL)
 	{
 		printf("Error opening file %s", filename);
@@ -45,7 +45,7 @@ int count_rucksacks(char* filename)
 	return rucksack_count;
 }
 
-char count_char_in_string(char* str, char c)
+char count_char_in_string(char *str, char c)
 {
 	char count = 0;
 	for (int i = 0; i < strlen(str); i++)
@@ -53,7 +53,7 @@ char count_char_in_string(char* str, char c)
 	return count;
 }
 
-char get_most_common_char(char* str, char* exclude)
+char get_most_common_char(char *str, char *exclude)
 {
 	char most_common = 0;
 	char most_common_count = 0;
@@ -76,7 +76,7 @@ char get_most_common_char(char* str, char* exclude)
 
 void calc_most_common(rucksack_t rucksacks)
 {
-	char* exclude = (char*)malloc(sizeof(char) * (rucksacks->capacity / 2 + 1));
+	char *exclude = (char *)malloc(sizeof(char) * (rucksacks->capacity / 2 + 1));
 	char common = get_most_common_char(rucksacks->all_compartments, exclude);
 
 	int char_is_in_1 = count_char_in_string(rucksacks->compartment_one, common);
@@ -98,8 +98,8 @@ void calc_most_common(rucksack_t rucksacks)
 
 #ifdef DEBUG
 	printf("Cap: %2d -> All: %52s -> Items: %26s %26s -> Most common: %c [%d,%d]-> excl: %s",
-		rucksacks->capacity, rucksacks->all_compartments,
-		rucksacks->compartment_one, rucksacks->compartment_two, common, char_is_in_1, char_is_in_2, exclude);
+		   rucksacks->capacity, rucksacks->all_compartments,
+		   rucksacks->compartment_one, rucksacks->compartment_two, common, char_is_in_1, char_is_in_2, exclude);
 #endif
 	free(exclude);
 }
@@ -116,17 +116,17 @@ int sum_priorities(rucksack_t rucksacks, const int rucksack_count)
 int group_elves(rucksack_t rucksacks, const int rucksack_count)
 {
 	int sum = 0;
-	char* grouped_items = (char*)malloc(sizeof(char) * (150 + 1));
+	char *grouped_items = (char *)malloc(sizeof(char) * (150 + 1));
 	for (int i = 0; i < rucksack_count; i += 3)
 	{
 		int grouped_capacity = rucksacks[i].capacity + rucksacks[i + 1].capacity + rucksacks[i + 2].capacity;
 		grouped_items[0] = '\0';
-		grouped_items = (char*)realloc(grouped_items, sizeof(char) * (grouped_capacity + 1));
+		grouped_items = (char *)realloc(grouped_items, sizeof(char) * (grouped_capacity + 1));
 
 		for (int j = 0; j < GROUP_SIZE; j++)
 			strcat(grouped_items, rucksacks[i + j].all_compartments);
 
-		char* exclude = (char*)malloc(sizeof(char) * (58 + 1));
+		char *exclude = (char *)malloc(sizeof(char) * (58 + 1));
 		exclude[0] = '\0';
 		char common = get_most_common_char(grouped_items, exclude);
 
@@ -145,13 +145,12 @@ int group_elves(rucksack_t rucksacks, const int rucksack_count)
 			k++;
 			exclude[k] = '\0';
 			if (k > 58)
-				break; //
+				break; // exclude is full
 		}
 		sum += (common > 'Z') ? (common - 'a' + 1) : (common - 'A' + 27);
 #ifdef DEBUG
-		// printf("Sum: %4d -> Iter: %2d -> Group: %2d -> Badge: [%c] -> Prio: %2d -> Grouped items: %s\n",
-		// 	sum, k, i / 3, common, (common > 'Z') ? (common - 'a' + 1) : (common - 'A' + 27), exclude
-		// );
+		printf("Sum: %4d -> Iter: %2d -> Group: %2d -> Badge: [%c] -> Prio: %2d -> Grouped items: %s\n",
+			   sum, k, i / 3, common, (common > 'Z') ? (common - 'a' + 1) : (common - 'A' + 27), exclude);
 #endif
 		free(exclude);
 	}
@@ -159,9 +158,9 @@ int group_elves(rucksack_t rucksacks, const int rucksack_count)
 	return sum;
 }
 
-rucksack_t fill_rucksacks(char* filename, const int rucksack_count)
+rucksack_t fill_rucksacks(char *filename, const int rucksack_count)
 {
-	FILE* file = fopen(filename, "r");
+	FILE *file = fopen(filename, "r");
 	if (file == NULL)
 	{
 		printf("Error opening file %s", filename);
@@ -177,10 +176,11 @@ rucksack_t fill_rucksacks(char* filename, const int rucksack_count)
 		if (line[0] == '\n')
 			continue;
 
-		for (rucksacks->capacity = 0; line[rucksacks->capacity] != '\n'; ++rucksacks->capacity); // count capacity
-		rucksacks->compartment_one = (char*)malloc(sizeof(char) * (rucksacks->capacity / 2 + 1));
-		rucksacks->compartment_two = (char*)malloc(sizeof(char) * (rucksacks->capacity / 2 + 1));
-		rucksacks->all_compartments = (char*)malloc(sizeof(char) * (rucksacks->capacity + 1));
+		for (rucksacks->capacity = 0; line[rucksacks->capacity] != '\n'; ++rucksacks->capacity)
+			; // count capacity
+		rucksacks->compartment_one = (char *)malloc(sizeof(char) * (rucksacks->capacity / 2 + 1));
+		rucksacks->compartment_two = (char *)malloc(sizeof(char) * (rucksacks->capacity / 2 + 1));
+		rucksacks->all_compartments = (char *)malloc(sizeof(char) * (rucksacks->capacity + 1));
 
 		for (int i = 0; i < rucksacks->capacity / 2; i++)
 		{
@@ -221,7 +221,7 @@ void free_rucksacks(rucksack_t rucksacks, const int rucksack_count)
 // MAIN
 // ------------------------------------------------------------
 
-int main(int argc, char const* argv[])
+int main(int argc, char const *argv[])
 {
 	const int rucksack_count = count_rucksacks(INPUT_FILE);
 	rucksack_t rucksacks = fill_rucksacks(INPUT_FILE, rucksack_count);
