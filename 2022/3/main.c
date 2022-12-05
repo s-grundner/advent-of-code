@@ -99,8 +99,7 @@ void calc_most_common(rucksack_t rucksacks)
 #ifdef DEBUG
 	printf("Cap: %2d -> All: %52s -> Items: %26s %26s -> Most common: %c [%d,%d]-> excl: %s",
 		rucksacks->capacity, rucksacks->all_compartments,
-		rucksacks->compartment_one, rucksacks->compartment_two, common, char_is_in_1, char_is_in_2, exclude
-	);
+		rucksacks->compartment_one, rucksacks->compartment_two, common, char_is_in_1, char_is_in_2, exclude);
 #endif
 	free(exclude);
 }
