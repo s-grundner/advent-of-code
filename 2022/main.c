@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INPUT_SIZE 80
+#define INPUT_SIZE 40
 #define INPUT_FILE "input.txt"
 #define DELIM_STACK " []"
 #define DELIM_INST " "
@@ -17,23 +17,21 @@
 
 typedef struct
 {
-	int items_to_move;
-	int src_stack_id;
-	int dest_stack_id;
+	int move;
+	int from;
+	int to;
 } instruction_t;
 
 typedef struct
 {
 	int size;
-	int max_size;
-	char* content; // each char is an item
+	char* content;
 } stack_t;
 typedef struct
 {
 	int max_stack_height;
 	int max_stack_count;
 	int instruction_count;
-	int finished_instructions;
 	stack_t* stacks;
 	instruction_t* instructions;
 } cargo_t;
@@ -63,26 +61,22 @@ void init_cargo(char* filename, cargo_t* cargo)
 		return;
 	}
 
-	cargo->max_stack_height = 0;
-	cargo->max_stack_count = 0;
+	cargo->max_stack_height = 8;
+	cargo->max_stack_count = 9;
 	cargo->instruction_count = 0;
-	cargo->finished_instructions = 0;
 
 	char line[INPUT_SIZE];
 
 	while (fgets(line, sizeof(line), file) != NULL)
 	{
-		if (line[1] != '1')
-		{
-			cargo->max_stack_height += (line[0] != '\n' && line[0] != 'm');
-			cargo->instruction_count += (line[0] == 'm');
-		}
-		else
-		{
-			int len;
-			for (len = 0; line[len] != '\0'; ++len);
-			cargo->max_stack_count = len / 4;
-		}
+		// if (line[1] == '1')
+		// {
+		// 	int len;
+		// 	for (len = 0; line[len] != '\0'; ++len);
+		// 	cargo->max_stack_count = len / 4;
+		// }
+		// cargo->max_stack_height += (line[0] != '\n' && line[0] != 'm');
+		cargo->instruction_count += (line[0] == 'm');
 	}
 
 	fclose(file);
@@ -91,10 +85,8 @@ void init_cargo(char* filename, cargo_t* cargo)
 	cargo->stacks = (stack_t*)malloc(cargo->max_stack_count * sizeof(stack_t));
 
 	for (int i = 0; i < cargo->max_stack_count; i++)
-	{
 		cargo->stacks[i].content = (char*)malloc((cargo->max_stack_height) * sizeof(char));
-		cargo->stacks[i].size = cargo->max_stack_height;
-	}
+
 }
 
 void fill_cargo(char* filename, cargo_t* cargo)
@@ -105,45 +97,49 @@ void fill_cargo(char* filename, cargo_t* cargo)
 		printf("Error opening file %s", filename);
 		return;
 	}
-
 	instruction_t* first_instruction = cargo->instructions;
+	int current_stack_height = cargo->max_stack_height;
 	char line[INPUT_SIZE];
-	int current_stack_height = cargo->max_stack_height - 1;
-
 	while (fgets(line, sizeof(line), file) != NULL)
 	{
-		// print indent count
 		if (line[0] == 'm')
 		{
 			char* token = strtok(line, DELIM_INST);
 			token = strtok(NULL, DELIM_INST);
-			cargo->instructions->items_to_move = atoi(token);
+			cargo->instructions->move = atoi(token);
 			token = strtok(NULL, DELIM_INST);
 			token = strtok(NULL, DELIM_INST);
-			cargo->instructions->src_stack_id = atoi(token);
+			cargo->instructions->from = atoi(token);
 			token = strtok(NULL, DELIM_INST);
 			token = strtok(NULL, DELIM_INST);
-			cargo->instructions->dest_stack_id = atoi(token);
+			cargo->instructions->to = atoi(token);
 			cargo->instructions++;
 		}
 		else if (line[0] != '\n' && line[1] != '1')
 		{
-			char* token = strtok(line, DELIM_STACK);
-			for (int i = 0; i < cargo->max_stack_count * 4; i += 4)
+			char* token = (char*)malloc((current_stack_height - 1) * sizeof(char));
+			char* temp = token;
+			char* temp2;
+			token = strtok(line, DELIM_STACK);
+			for (int i = 0; i < cargo->max_stack_count * 4 && current_stack_height >0; i += 4)
 			{
+				cargo->stacks[i / 4].size = count_char_in_string(line, ' ') / 4;
 				if (line[i] == ' ' && line[i + 1] == ' ' && line[i + 2] == ' ' && line[i + 3] == ' ')
 				{
 					cargo->stacks[i / 4].content[current_stack_height] = '#';
-					cargo->stacks[i / 4].size--;
 				}
-				else
-				{
-					cargo->stacks[i / 4].content[current_stack_height] = token[0];
+				else {
+					cargo->stacks[i / 4].content[current_stack_height] = 'w';
+					printf("%c%d ", *token, current_stack_height);
 					token = strtok(NULL, DELIM_STACK);
 				}
-				cargo->stacks[i / 4].max_size = cargo->stacks[i / 4].size;
+				cargo->stacks[i / 4].content[current_stack_height] = 'E';
+
 			}
 			current_stack_height--;
+			token = temp;
+			free(token);
+			printf("\n");
 		}
 	}
 	cargo->instructions = first_instruction;
@@ -158,55 +154,6 @@ void free_cargo(cargo_t* cargo)
 	free(cargo->instructions);
 }
 
-// recursive function to reorganize items in stack according to instruction
-void restack_cargo(cargo_t* cargo)
-{
-	if (cargo->finished_instructions >= cargo->instruction_count)
-	{
-		for (int i = 0; i < cargo->max_stack_count; i++)
-			printf("%s [%d]\n", cargo->stacks[i].content, cargo->stacks[i].size);
-		return;
-	}
-	int src_stack_id = cargo->instructions[cargo->finished_instructions].src_stack_id;
-	int dest_stack_id = cargo->instructions[cargo->finished_instructions].dest_stack_id;
-	int items_to_move = cargo->instructions[cargo->finished_instructions].items_to_move;
-
-	printf("Instruction %3d: Moving %3d items from stack %d(%3d|%3d) to stack %d(%3d|%3d) -> Max: %2d\n",
-		cargo->finished_instructions + 1,
-		cargo->instructions[cargo->finished_instructions].items_to_move,
-		cargo->instructions[cargo->finished_instructions].src_stack_id,
-		cargo->stacks[src_stack_id].size,
-		cargo->stacks[src_stack_id].size - items_to_move,
-		cargo->instructions[cargo->finished_instructions].dest_stack_id,
-		cargo->stacks[dest_stack_id].size,
-		cargo->stacks[dest_stack_id].size - items_to_move,
-
-		cargo->max_stack_height);
-
-	cargo->stacks[dest_stack_id].size += items_to_move;
-	cargo->stacks[src_stack_id].size -= items_to_move;
-
-	if (cargo->stacks[dest_stack_id].size > cargo->stacks[dest_stack_id].max_size)
-	{
-		if (!realloc(cargo->stacks[dest_stack_id].content, cargo->stacks[dest_stack_id].size * sizeof(char)))
-		{
-			printf("Error reallocating memory for stack %d", dest_stack_id);
-			return;
-		}
-		printf("---------- Reallocated %d for stack %d ----------\n",
-			cargo->stacks[dest_stack_id].size, dest_stack_id);
-		cargo->stacks[dest_stack_id].max_size = cargo->stacks[dest_stack_id].size;
-	}
-	if (cargo->stacks[src_stack_id].size < 0)
-	{
-		printf("Error: stack %d is empty (%d)\n", src_stack_id, cargo->stacks[src_stack_id].size);
-		// return;
-	}
-	cargo->finished_instructions++;
-	return restack_cargo(cargo);
-}
-
-
 // ------------------------------------------------------------
 // MAIN
 // ------------------------------------------------------------
@@ -217,7 +164,8 @@ int main(int argc, char const* argv[])
 	init_cargo(INPUT_FILE, &cargo);
 	fill_cargo(INPUT_FILE, &cargo);
 	printf("max stack height: %d, max stack count: %d, instruction count: %d\n", cargo.max_stack_height, cargo.max_stack_count, cargo.instruction_count);
-	restack_cargo(&cargo);
+	for (int i = 0; i < cargo.max_stack_count; i++)
+		printf("%s, %d", cargo.stacks[i].content, cargo.stacks[i].size);
 	free_cargo(&cargo);
 	return 0;
 }
