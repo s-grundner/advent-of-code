@@ -116,6 +116,9 @@ void cd(filesystem_t* fs, char* path)
 		// fs->current = fs->current->parent;
 		return;
 	}
+	mkdir(fs, path);
+
+
 	if (strcmp(path, "/") == 0)
 	{
 		fs->current = fs->root;
@@ -135,13 +138,8 @@ void cd(filesystem_t* fs, char* path)
 		}
 	}
 
-	// print folder and parents
-#ifdef DEBUG
-
-
-#endif
-	// if not found, create folder
 	mkdir(fs, path);
+	fs->current = fs->current->sub_folders[fs->current->dir_count - 1];
 }
 
 void ls(folder_t* folder)
