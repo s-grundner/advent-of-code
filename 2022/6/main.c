@@ -46,8 +46,8 @@ int decrypt_markers(char* input_file, int marker_interval)
 		first_marker_at++;
 		if (first_marker_at > actual_length)
 		{
-			printf("No marker found\n");
 			return -1;
+			printf("No marker found\n");
 		}
 	}
 	first_marker_at += marker_interval;
