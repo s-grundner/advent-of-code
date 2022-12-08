@@ -7,7 +7,7 @@
 #include <string.h>
 
 #define INPUT_FILE "input.txt"
-#define MAX_LINE_LENGTH 5001
+#define INPUT_SIZE 5001
 
 // ------------------------------------------------------------
 // UTIL
@@ -35,8 +35,8 @@ int decrypt_markers(char* input_file, int marker_interval)
 	}
 
 	int first_marker_at = 0;
-	char line[MAX_LINE_LENGTH];
-	fgets(line, MAX_LINE_LENGTH, fp);
+	char line[INPUT_SIZE];
+	fgets(line, INPUT_SIZE, fp);
 
 	int actual_length = 0;
 	for (actual_length = 0; line[actual_length] != '\0'; actual_length++);
