@@ -1,7 +1,5 @@
 # Advent of Code 2022 - Day 3
 
-This is a C implementation of the solution for day 3 of Advent of Code 2022.
-
 The program reads a list of strings from an input file and calculates the most common character in each group of strings. The program uses several utility functions to perform the calculations, such as `count_char_in_string()` and `get_most_common_char()`.
 
 The program will read the input from a file called `input.txt` in the current directory and print the solution to the console.
