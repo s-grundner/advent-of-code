@@ -26,6 +26,10 @@ typedef struct {
 	folder_t* current;
 } filesystem_t;
 
+// ------------------------------------------------------------
+// FUNCTION DECLARATIONS
+// ------------------------------------------------------------
+
 void mkfs(filesystem_t* fs, char* root_name);
 void mkdir(filesystem_t* fs, char* name);
 void cd(filesystem_t* fs, char* path);
@@ -90,7 +94,7 @@ int sum_tree(folder_t* folder, int depth, int sum_smaller_than)
 	return sum;
 }
 
-folder_t* folder_to_delete(folder_t* folder, int depth, int sum_greater_than)
+folder_t* find_optimal_folder_to_delete_for_update(folder_t* folder, int depth, int sum_greater_than)
 {
 	if (folder->sub_folders)
 		for (int i = 0; i < folder->dir_count; i++)
@@ -207,7 +211,7 @@ int main(int argc, char const* argv[])
 	mkfs(&fs, "/");
 	revert_from_history(&fs, HISTORY_FILE);
 	printf("size of small dirs: %d\n", sum_tree(fs.root, 0, 100000));
-	printf("folder size to delete for update: %d\n", folder_to_delete(fs.root, 0, fs.root->size - MIN_USED_SPACE)->size);
+	printf("folder size to delete for update: %d\n", find_optimal_folder_to_delete_for_update(fs.root, 0, fs.root->size - MIN_USED_SPACE)->size);
 	free_folder(fs.root);
 	return 0;
 }
