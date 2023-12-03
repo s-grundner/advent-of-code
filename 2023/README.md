@@ -6,6 +6,6 @@
 
 | Day | Puzzle      | Solution                  |
 | --: | ----------- | ------------------------- |
-| 1   | Trebuchet?! | [day1.c](2023/src/day1.c) |
+| 1   | Trebuchet?! | [day1.c](src/day1.c) |
 |	2   | | |
 | 3   | | |
