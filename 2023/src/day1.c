@@ -15,21 +15,23 @@
 #define OUTPUT "../outputs/day1.txt"
 #define LEN 80
 
-static const char* STR_NUMS[10] = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
-static const char* NUMS = "0123456789";
+static const char *STR_NUMS[10] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+static const char *NUMS = "0123456789";
 
-char is_num(char c) {
+char is_num(char c)
+{
 	return (c >= '0' && c <= '9');
 }
 
-char* strrstr(const char* haystack, const char* needle, int progress)
+char *strrstr(const char *haystack, const char *needle, int progress)
 {
-	char* r = NULL;
+	char *r = NULL;
 	if (!needle[0])
-		return (char*)haystack + strlen(haystack);
-	haystack = (char*)haystack + progress; // chars below first idx dont have to be checked
-	while (1) {
-		char* p = strstr(haystack, needle);
+		return (char *)haystack + strlen(haystack);
+	haystack = (char *)haystack + progress; // chars below first idx dont have to be checked
+	while (1)
+	{
+		char *p = strstr(haystack, needle);
 		if (!p)
 			return r;
 		r = p;
@@ -37,12 +39,14 @@ char* strrstr(const char* haystack, const char* needle, int progress)
 	}
 }
 
-char get_first_num(char* buf, int* idx) {
+char get_first_num(char *buf, int *idx)
+{
 	*idx = strcspn(buf, NUMS);
 	return buf[*idx] - '0';
 }
 
-char get_last_num(char* buf, int* idx, int progress) {
+char get_last_num(char *buf, int *idx, int progress)
+{
 	for (int i = progress; buf[i] != '\0'; i++)
 		if (is_num(buf[i]))
 			*idx = i;
@@ -51,7 +55,7 @@ char get_last_num(char* buf, int* idx, int progress) {
 
 int day1_1()
 {
-	FILE* in = fopen(INPUT, "r");
+	FILE *in = fopen(INPUT, "r");
 	int sum = 0;
 	char buf[LEN];
 	while (fgets(buf, sizeof(buf), in) != NULL)
@@ -65,8 +69,7 @@ int day1_1()
 
 int day1_2()
 {
-	FILE* in = fopen(INPUT, "r");
-
+	FILE *in = fopen(INPUT, "r");
 	int sum = 0;
 	char buf[LEN];
 	while (fgets(buf, sizeof(buf), in) != NULL)
@@ -76,7 +79,7 @@ int day1_2()
 		int last_num = get_last_num(buf, &last_idx, first_idx);
 		for (int i = 0; i < 10; i++)
 		{
-			char* pch = strstr(buf, STR_NUMS[i]); // check for first literal number
+			char *pch = strstr(buf, STR_NUMS[i]); // check for first literal number
 			if (pch != NULL)
 			{
 				int str_idx = pch - buf; // index of literal number
@@ -103,7 +106,7 @@ int day1_2()
 	return sum;
 }
 
-int main(int argc, char const* argv[])
+int main(int argc, char const *argv[])
 {
 	printf("Answer of day 1 part 1 is: %d \n", day1_1());
 	printf("Answer of day 1 part 2 is: %d \n", day1_2());
