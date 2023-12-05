@@ -15,13 +15,10 @@
 #define OUTPUT "../outputs/day1.txt"
 #define LEN 80
 
+#define is_num(x) (x >= '0' && x <= '9')
+
 static const char *STR_NUMS[10] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
 static const char *NUMS = "0123456789";
-
-char is_num(char c)
-{
-	return (c >= '0' && c <= '9');
-}
 
 char *strrstr(const char *haystack, const char *needle, int progress) // find last occurring substring
 {
