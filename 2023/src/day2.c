@@ -15,6 +15,7 @@
 #define RED 12
 #define GREEN 13
 #define BLUE 14
+#define max(a, b) (((a) > (b)) ? (a) : (b))
 
 #define BUFLEN 180
 
@@ -31,36 +32,25 @@ int day2_1()
 	FILE *in = fopen(INPUT, "r");
 	int possible = 0;
 	char buf[BUFLEN];
-
-	while (fgets(buf, sizeof(buf), in) != NULL)
+	// each line is a game with bags separated by ";"
+	while (fgets(buf, sizeof(buf), in) != NULL) // iterate through games (lines)
 	{
-		char *p = strchr(buf, ':');
+		char *bag = strchr(buf, ':');
 		char done = 0;
-		while (p != NULL && !done)
+		while (bag != NULL && !done) // iterate through bags
 		{
-			p += 2;
+			bag += 2; // skip extra chars ": "
 			for (int i = 0; i < N_COLORS && !done; i++)
 			{
-				char *r = p;
-				while ((r = strstr(r, COLORS[i])) != NULL && !done)
-				{
-					r -= 3;
-					if (atoi(r) > LIMITS[i])
-					{
-						done = 1;
-						break;
-					}
-					r += 4;
-				}
+				char *cube = strstr(bag, COLORS[i]); // find cube color literal
+				if (cube != NULL)
+					done = (atoi(cube - 3) > LIMITS[i]); // -3 to reveal (2) digits before color
 			}
-			p = strchr(p, ';');
+			bag = strchr(bag, ';'); // skip to next bag
 		}
 		if (!done)
-		{
-			possible += atoi(buf + 4);
-		}
+			possible += atoi(buf + 4); // Game ID is at 4th index in line
 	}
-
 	fclose(in);
 	return possible;
 }
@@ -70,28 +60,21 @@ int day2_2()
 	FILE *in = fopen(INPUT, "r");
 	char buf[BUFLEN];
 	long sum_power = 0;
-	while (fgets(buf, sizeof(buf), in) != NULL)
+	// each line is a game with bags separated by ";"
+	while (fgets(buf, sizeof(buf), in) != NULL) // iterate through games (lines)
 	{
-		char *p = strchr(buf, ':');
+		char *bag = strchr(buf, ':');
 		int max_cubes[N_COLORS] = {0};
-		while (p != NULL)
+		while (bag != NULL) // iterate through bags
 		{
-			p += 2;
+			bag += 2; // skip extra chars ": "
 			for (int i = 0; i < N_COLORS; i++)
 			{
-				char *r = p;
-				while ((r = strstr(r, COLORS[i])) != NULL)
-				{
-					r -= 3;
-					int n_cubes = atoi(r);
-					if (n_cubes > max_cubes[i])
-					{
-						max_cubes[i] = n_cubes;
-					}
-					r += 4;
-				}
+				char *cube = strstr(bag, COLORS[i]); // find color literal
+				if (cube != NULL)
+					max_cubes[i] = max(atoi(cube - 3), max_cubes[i]); // -3 to reveal digits before color
 			}
-			p = strchr(p, ';');
+			bag = strchr(bag, ';'); // skip to next "bag"
 		}
 		sum_power += max_cubes[0] * max_cubes[1] * max_cubes[2];
 	}
