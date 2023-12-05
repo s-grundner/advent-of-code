@@ -23,7 +23,7 @@ char is_num(char c)
 	return (c >= '0' && c <= '9');
 }
 
-char *strrstr(const char *haystack, const char *needle, int progress)
+char *strrstr(const char *haystack, const char *needle, int progress) // find last occurring substring
 {
 	char *r = NULL;
 	if (!needle[0])
