@@ -7,5 +7,4 @@
 | Day | Puzzle      | Solution                  |
 | --: | ----------- | ------------------------- |
 | 1   | Trebuchet?! | [day1.c](src/day1.c) |
-|	2   | | |
-| 3   | | |
+| 2   | Cube Conundrum |  [day2.c](src/day2.c)|
