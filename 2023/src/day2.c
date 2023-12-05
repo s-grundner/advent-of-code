@@ -22,20 +22,15 @@
 static const char *COLORS[N_COLORS] = {"red", "green", "blue"};
 static const unsigned char LIMITS[N_COLORS] = {RED, GREEN, BLUE};
 
-char is_num(char c)
-{
-	return (c >= '0' && c <= '9');
-}
-
 int day2_1()
 {
-	FILE *in = fopen(INPUT, "r");
+	FILE *input = fopen(INPUT, "r");
 	int possible = 0;
-	char buf[BUFLEN];
+	char game[BUFLEN];
 	// each line is a game with bags separated by ";"
-	while (fgets(buf, sizeof(buf), in) != NULL) // iterate through games (lines)
+	while (fgets(game, sizeof(game), input) != NULL) // iterate through games (lines)
 	{
-		char *bag = strchr(buf, ':');
+		char *bag = strchr(game, ':');
 		char done = 0;
 		while (bag != NULL && !done) // iterate through bags
 		{
@@ -49,36 +44,36 @@ int day2_1()
 			bag = strchr(bag, ';'); // skip to next bag
 		}
 		if (!done)
-			possible += atoi(buf + 4); // Game ID is at 4th index in line
+			possible += atoi(game + 4); // Game ID is at 4th index in line
 	}
-	fclose(in);
+	fclose(input);
 	return possible;
 }
 
 int day2_2()
 {
-	FILE *in = fopen(INPUT, "r");
-	char buf[BUFLEN];
+	FILE *input = fopen(INPUT, "r");
+	char game[BUFLEN];
 	long sum_power = 0;
 	// each line is a game with bags separated by ";"
-	while (fgets(buf, sizeof(buf), in) != NULL) // iterate through games (lines)
+	while (fgets(game, sizeof(game), input) != NULL) // iterate through games (lines)
 	{
-		char *bag = strchr(buf, ':');
+		char *bag = strchr(game, ':');
 		int max_cubes[N_COLORS] = {0};
 		while (bag != NULL) // iterate through bags
 		{
 			bag += 2; // skip extra chars ": "
 			for (int i = 0; i < N_COLORS; i++)
 			{
-				char *cube = strstr(bag, COLORS[i]); // find color literal
+				char *cube = strstr(bag, COLORS[i]); // find cube color literal
 				if (cube != NULL)
-					max_cubes[i] = max(atoi(cube - 3), max_cubes[i]); // -3 to reveal digits before color
+					max_cubes[i] = max(atoi(cube - 3), max_cubes[i]); // -3 to reveal (2) digits before color
 			}
-			bag = strchr(bag, ';'); // skip to next "bag"
+			bag = strchr(bag, ';'); // skip to next bag
 		}
 		sum_power += max_cubes[0] * max_cubes[1] * max_cubes[2];
 	}
-	fclose(in);
+	fclose(input);
 	return sum_power;
 }
 
