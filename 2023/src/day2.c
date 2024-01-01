@@ -1,5 +1,5 @@
 /**
- * @file day1.c
+ * @file day2.c
  * @author Simon Grundner
  * @brief Advent of code puzzle day 2
  * @date 2023-12-02
